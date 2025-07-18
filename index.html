@@ -30,20 +30,21 @@
 
         /* Message box styling (fade in/out) */
         .message-box {
-            animation: fadeInOut 3s forwards;
-        }
-
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: translateY(-20px); }
-            10% { opacity: 1; transform: translateY(0); }
-            90% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-20px); }
+            position: absolute; /* Position absolutely within its relative parent */
+            bottom: 0; /* Align to the bottom */
+            left: 0;
+            right: 0;
+            opacity: 0; /* Start hidden */
+            transition: opacity 0.5s ease-in-out; /* Smooth fade effect */
+            pointer-events: none; /* Do not block clicks when invisible */
+            z-index: 10; /* Ensure it's above other content */
         }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-200 to-purple-300 min-h-screen flex items-center justify-center p-4">
 
-    <div id="game-container" class="bg-white p-8 rounded-3xl shadow-2xl text-center max-w-xl w-full border-4 border-blue-400 flex flex-col items-center justify-center">
+    <div id="game-container" class="bg-white p-8 rounded-3xl shadow-2xl text-center max-w-xl w-full border-4 border-blue-400 flex flex-col items-center justify-center relative pb-20">
+        <!-- Added relative and pb-20 to make space for the absolutely positioned message box -->
         <h1 class="text-5xl font-extrabold mb-8 text-blue-700 drop-shadow-lg">Pet the Dog!</h1>
 
         <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4 w-full px-4">
@@ -60,7 +61,8 @@
             <img id="dogImage3" src="" alt="Sleeping dog" class="dog-image absolute w-32 h-auto rounded-full shadow-md opacity-0 pointer-events-none">
         </div>
 
-        <div id="message-box" class="mt-4 p-5 bg-yellow-200 border border-yellow-500 text-yellow-900 rounded-xl shadow-md text-xl font-semibold hidden message-box"></div>
+        <!-- Message box now positioned absolutely -->
+        <div id="message-box" class="message-box p-5 bg-yellow-200 border border-yellow-500 text-yellow-900 rounded-xl shadow-md text-xl font-semibold text-center"></div>
     </div>
 
     <script>
@@ -72,6 +74,7 @@
         const MOVEMENT_INTERVAL = 1500; // milliseconds for how often the dog moves
         const GAME_DURATION = 20; // seconds
         const THREE_DOG_THRESHOLD = 7; // seconds remaining when 3 dogs appear
+        const MESSAGE_DISPLAY_DURATION = 3000; // milliseconds for message to be visible
 
         // --- Game State Variables ---
         let score = 0;
@@ -111,11 +114,13 @@
          */
         function showMessage(message) {
             messageBox.textContent = message;
-            messageBox.classList.remove('hidden');
-            // The CSS animation handles fade out.
+            messageBox.style.opacity = '1'; // Make visible
+            messageBox.style.pointerEvents = 'auto'; // Enable interaction if needed (though not for this message box)
+
             setTimeout(() => {
-                messageBox.classList.add('hidden');
-            }, 3000); // Hide after 3 seconds (matches CSS animation duration)
+                messageBox.style.opacity = '0'; // Fade out
+                messageBox.style.pointerEvents = 'none'; // Disable interaction after fade out
+            }, MESSAGE_DISPLAY_DURATION);
         }
 
         /**
